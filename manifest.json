@@ -1,0 +1,20 @@
+{
+  "name": "IMDB Ratings +VG version",
+  "version": "1.1.1",
+  "manifest_version": 2,
+  "description": "An extension for displaying IMDB ratings in listings. Now includes Video Games.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "http://www.omdbapi.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.imdb.com/*"],
+      "js": ["scripts/libs/jquery.min.js", "scripts/page.js"]
+    }
+  ]
+}
