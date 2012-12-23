@@ -16,4 +16,5 @@ Features:
 Uses [The OMDB API](http://www.omdbapi.com) for fetching the ratings data.
 
 [@skidding](https://twitter.com/skidding)
+
 [Tasoli](http://tasoli.com/forum)
