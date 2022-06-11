@@ -1,8 +1,8 @@
 {
-  "name": "IMDB Ratings +VG version",
-  "version": "1.1.1",
+  "name": "IMDB Display Rating Near Title",
+  "version": "1.0",
   "manifest_version": 2,
-  "description": "An extension for displaying IMDB ratings in listings. Now includes Video Games.",
+  "description": "Displays a colored 1-10 scale for ratings of IMDB works near their title, and near the individual's name.",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",

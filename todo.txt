@@ -1,0 +1,1 @@
+- Display average rating for each section, eg. Actor, Writer, Producer.

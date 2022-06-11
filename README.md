@@ -1,20 +1,18 @@
-IMDB ratings left-align +VG version
+IMDB Display Rating Near Title
 ===============
 
-**[Chrome extension](https://chrome.google.com/webstore/detail/imdb-ratings/fbbcaooelpdopodjcneapidogdpelfeg)** for displaying IMDB ratings in listings. Check [extension page](https://chrome.google.com/webstore/detail/imdb-ratings/fbbcaooelpdopodjcneapidogdpelfeg) for screenshots.
+Chrome extension for displaying the rating of a project on IMDB to the left of its title. Note: This extension uses the free OMDB API and is limited to 1,000 API calls per day. If you don't see ratings listed next to project titles, try again tomorrow.
 
 Features:
 
 * Displays rating for each movie in a filmography section of a person (actor/director/etc.)
-* Grays out _inferior_ content from listing, based on rating and relevance*
+* Distinguishes content based on rating and relevance*
 * Generates a person rating based on its titles**
 
-\* TV items need a higher rating to not be grayed out (since they usually have higher ratings than regular movies to begin with). (TV / Video Games >= 8, Film >= 7)
+\* * TV items need a higher rating to be considered "good" (since they usually have higher ratings than movies to begin with). TV / Video Games >= 8, Film >= 7
 
-\** Only the first filmography section (IMDB sets most relevant as first) is used for calculating the person score.
+\*** Only the first filmography section (IMDB sets most relevant as first) is used for calculating the person score.
 
 Uses [The OMDB API](http://www.omdbapi.com) for fetching the ratings data.
 
-[@skidding](https://twitter.com/skidding)
-
-[Tasoli](http://tasoli.com/forum)
+Based on a project created by [@skidding](https://twitter.com/skidding), modified by [Cory Thorpe](http://corythorpe.com) [@CoryUX](https://twitter.com/coryux).

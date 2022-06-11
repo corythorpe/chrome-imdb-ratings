@@ -8,15 +8,92 @@ var getIdFromLink = function(href) {
   var matches = href.match(/title\/([a-z0-9]+)/i);
   return matches ? matches[1] : null;
 };
-var getRatingTag = function(rating) {
+// This function is called to stylize and color the rating for an individual work.
+// Some of this code was harvested from the original extension, with modifications by Cory.
+var getRatingTagColor = function(rating) {
+  var red = 60;
+  var green = 60;
+  var blue = 60;
+  var tag = $('<span/>');
+  // Add extra spaces to not touch with any surrounding elements
+  // If there's no rating, display the Not Rated text
+  tag.html(' ' + (rating ? rating.toFixed(1) : '<span style="position: relative; padding-bottom: 9%; display: inline-block; text-align: center; top: 2px; font-size: 0.6em;"">Not Rated</span>') + ' ');
+  tag.css('display', 'inline-block');
+  tag.css('width', '6%');
+  tag.css('text-align', 'center');
+  // If there's no rating, make it rgb 60,60,60
+  if (!rating) {
+    tag.css('color', 'rgb(' + red + ','  + green + ','  + blue + ')');
+    return tag;
+  }
+  else {
+    // Adjust the red based on the rating
+    red = (255 - (rating * 19.5)).toFixed(0);
+    // If the rating would make G greater than 60 according
+    // to this equation, calculate new G
+    if (rating >= 2.3) {
+      green = (rating * 20).toFixed(0);
+    }
+    // If the rating would make B greater than 60 according
+    // to this equation, calculate new B
+    if (rating >= 6.6) {
+      blue = (rating * 9).toFixed(0);
+    }
+    // Set the color of tag to new RGB values and return
+    tag.css('color', 'rgb(' + red + ','  + green + ', ' + blue + ')');
+    // If the rating is higher than 8, add an SVG rectangle and color the
+    // rectangle instead of the text.
+    if (rating >= 8.0) {
+      // Change the green string back into a number
+      green = parseFloat(green);
+      // Add 30 more. This makes the green rectangle stand out
+      green = green + 30;
+      // This is the rectangle code where we color the rectangle according to the math done above
+      tag.html('<svg style="margin-left:5%" display="block" height="16" width="32.5"><rect x="0" y="0" height="15" width="32.5" rx="5" ry="5" stroke="black" stroke-width="0" fill="rgb( '+ red + ','  + green + ','  + blue + ')" /><text x="50%" y="50%" text-anchor="middle" dy=".32em" font-size=".85em">' + (rating ? rating.toFixed(1) : 'N/A') + '</text>Sorry, your browser does not support inline SVG.</svg>');
+      tag.css('height', '13px');
+      tag.css('font-weight', 'bold');
+      tag.css('text-align', '');
+    }
+    return tag;
+  }
+};
+// This function is called to stylize and color the rating for a person overall.
+// It uses a different scale of coloring because it's much more difficult for a
+// person to achieve a very high (8+) overall rating.
+// Not used yet.
+var getPersonRatingTagColor = function(rating) {
+  var red = 60;
+  var green = 60;
+  var blue = 60;
   var tag = $('<span/>');
   // Add extra spaces to not touch with any surrounding elements
   tag.html(' ' + (rating ? rating : 'N/A') + ' ');
-  // No colors for now (check older commits for getRatingColor function)
-  tag.css('color', '#444');
   tag.css('display', 'inline-block');
-  tag.css('width', '5.5%');
-  return tag;
+  tag.css('width', '14%');
+  tag.css('font-size', '1.2em');
+  tag.css('font-weight', 'bold');
+  // If there's no rating, make it rgb 60,60,60
+  if (!rating) {
+    tag.css('color', 'rgb(' + red + ','  + green + ','  + blue + ')');
+    return tag;
+  }
+  else {
+    // Adjust the red based on the rating
+    red = (255 - (rating * 19.5)).toFixed(0);
+    // If the rating would make G greater than 60 according
+    // to this equation, calculate new G
+    if (rating >= 2.3) {
+      green = (rating * 25.5).toFixed(0);
+    }
+    // If the rating would make B greater than 60 according
+    // to this equation, calculate new B
+    if (rating >= 6.6) {
+      blue = (rating * 9).toFixed(0);
+    }
+    // Set the color of tag to new RGB values and return
+    tag.css('color', 'rgb(' + red + ','  + green + ', ' + blue + ')');
+    return tag;
+  }
 };
 var getMovieType = function(row) {
   // Since the omdb api does not return any data regarding the type of the
@@ -51,18 +128,21 @@ var addRatingToMovieRow = function(row, callback) {
       return;
     }
     // Request omdb api movie data for respective id
-    $.get('http://www.omdbapi.com/?i=' + id, function(response, xhr) {
-      var data = JSON.parse(response);
+    $.get('https://www.omdbapi.com/?i=' + id + '&apikey=2ec174e2', function(response, xhr) {
+      var data = response;
       // Bail out if response is invalid or imdbRating is missing
       if (!data || !data.imdbRating) {
         callback(null);
         return;
       }
+      // By attaching .toFixed(1) we always parse to 1 decimal place. This caused the
+      // Person Rating to always return NaN
       var rating = parseFloat(data.imdbRating, 10);
       // Insert rating tag after name anchor
-      $(anchor).before(getRatingTag(rating));
+      $(anchor).before(getRatingTagColor(rating));
       // Make not important stuff opaque
-      $(row).css('opacity', isGoodMovie(row, rating) ? 1 : 0.6);
+      // Ditched the opacity changing in favor of a colored number rating system
+      // $(row).css('opacity', isGoodMovie(row, rating) ? 1 : 0.6);
       callback(rating);
     });
   });
@@ -109,7 +189,7 @@ $.fn.loadPageRatings = function() {
     sections.first(':visible').loadSectionRatings(function(rating) {
       // Add person rating next to its name
       $(content).find('h1.header').each(function() {
-        var tag = getRatingTag(rating);
+        var tag = getPersonRatingTagColor(rating);
         var span = $(this).find('span:first');
         if (span.length) {
           span.before(tag);
